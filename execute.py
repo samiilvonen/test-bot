@@ -1,7 +1,7 @@
 import subprocess
 import config
 
-def serial(command, out=None, err=None):
+def serial(command, out=None, err=subprocess.STDOUT):
     print('Execute: ' + command)
     try:
         subprocess.check_call(command, stdout=out, stderr=err, shell=True)
@@ -9,7 +9,7 @@ def serial(command, out=None, err=None):
     except subprocess.CalledProcessError:
         print('  FAIL')
 
-def parallel(command, tasks=4, threads=None, out=None, err=None):
+def parallel(command, tasks=4, threads=None, out=None, err=subprocess.STDOUT):
     if config.mpi_runner == 'aprun':
         cmd = aprun(command, tasks, threads)
     elif config.mpi_runner == 'mpirun':
