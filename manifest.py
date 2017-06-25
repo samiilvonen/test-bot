@@ -9,7 +9,7 @@ ro_tag = re.compile('(^|\s+)\+(?P<tag>\w+)')
 ro_word = re.compile('''["'](.*)["']|(\w+)''')
 
 class Manifest(object):
-    def __init__(self, filename=None):
+    def __init__(self, filename):
         self.targets = []
         self.read(filename)
 
@@ -27,23 +27,23 @@ class Manifest(object):
             for m in ro_tag.finditer(snippet):
                 tag = m.group('tag')
                 args[tag] = True
-                snippet.replace(tag, '', 1)
+                snippet = snippet.replace(tag, '', 1)
             # find all arguments in long-form ...
             for m in ro_assign.finditer(snippet):
                 args[m.group('key')] = m.group('value')
-                snippet.replace(m.group('all'), '', 1)
+                snippet = snippet.replace(m.group('all'), '', 1)
             # ... and in short-form
             snippet.strip()
             if snippet:
                 words = []
                 for word in ro_word.finditer(snippet):
-                    words.append(word[0] or word[1])
+                    words.append(word.group(0) or word.group(1))
                 if len(words) == 2:
                     args['type'] = words[0]
                     args['reference'] = words[1]
             self.add_target(path, args)
 
-    def add_target(path, args={}):
+    def add_target(self, path, args={}):
         if path not in self.targets:
             self.targets.append(Target(path, **args))
         else:
@@ -51,7 +51,7 @@ class Manifest(object):
             self.targets[i].define(**args)
 
     def __repr__(self):
-        print('Manifest({0})'.format(self.__filename__))
+        return "Manifest('{0}')".format(self.__filename__)
 
     def echo(self):
         for target in self.targets:
