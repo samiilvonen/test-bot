@@ -52,3 +52,8 @@ class Manifest(object):
 
     def __repr__(self):
         print('Manifest({0})'.format(self.__filename__))
+
+    def echo(self):
+        for target in self.targets:
+            target.echo()
+            print('')

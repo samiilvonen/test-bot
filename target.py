@@ -46,6 +46,17 @@ class Target(object):
                 .format(self.path, self.type, self.reference, self.mpi,
                         self.omp, extras)
 
+    def echo(self):
+        print('Target: {0}'.format(str(self)))
+        print('  type=' + str(self.type))
+        print('  reference=' + str(self.reference))
+        print('  MPI=' + str(self.mpi))
+        print('  OpenMP=' + str(self.omp))
+        keys = self.__keys__.difference(
+                set(['type', 'reference', 'mpi', 'omp']))
+        for key in keys:
+            print('  {0}={1}'.format(key, getattr(self, key)))
+
     def isdir(self):
         return os.path.isdir(self.path)
 
