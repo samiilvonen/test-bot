@@ -47,6 +47,15 @@ if __name__ == '__main__':
         core.manifest.echo()
     elif cmd == 'add':
         core.manifest.update(args[0])
+    elif cmd == 'init':
+        if not os.path.exists(core.botdir):
+            os.mkdir(core.botdir)
+            with open(core.botdir + '/config') as fp:
+                fp.write('# Configuration for\n')
+                fp.write('#   github.com/mlouhivu/test-bot.git\n')
+            with open(core.botdir + '/config') as fp:
+                fp.write('# Manifest of test targets for\n')
+                fp.write('#   github.com/mlouhivu/test-bot.git\n')
     elif cmd == 'run':
         failed = []
         pwd = os.path.realpath('.')
@@ -83,6 +92,8 @@ if __name__ == '__main__':
                 print('  ' + str(target))
         else:
             print('Yippee. All is good.')
+    else:
+        print('Unknown command: ' + cmd)
 
     # the end.
 
