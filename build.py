@@ -5,7 +5,7 @@ class BaseCompiler(object):
             out=None, err=None):
         self.command = str(command)
         self.options = self.parse_options(options)
-        self.output = str(output) and output
+        self.output = output and str(output)
         self.stdout = out
         self.stderr = err
 
@@ -28,7 +28,6 @@ class BaseCompiler(object):
         return cmd + ' %s'
 
     def __call__(self, filename):
-        str(self) + filename
         cmd = self.invocation() % filename
         execute.serial(cmd, out=self.stdout, err=self.stderr)
 
@@ -42,7 +41,7 @@ class Linker(BaseCompiler):
     def __init__(self, command, options=None, libraries=None, output=None):
         self.command = str(command)
         self.options = self.parse_options(options)
-        self.output = str(output) and output
+        self.output = output and str(output)
         self.libraries = []
         for library in libraries:
             self.add_library(library)
