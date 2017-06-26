@@ -12,9 +12,14 @@ if os.path.exists(botdir):
     log.write('#'*80 + '\n')
 
 def make(target):
+    pre = set([x for x in os.listdir('.') if os.path.isfile(x)])
     try:
         subprocess.check_call('make', stdout=log, stderr=subprocess.STDOUT,
                 shell=True)
+        post = set([x for x in os.listdir('.') if os.path.isfile(x)])
+        new = post.difference(pre)
+        if new and not hasattr(target, 'binary'):
+            target.binary = str(new.pop())
         return True
     except subprocess.CalledProcessError:
         return False
@@ -49,4 +54,3 @@ def run(target):
         return execute.serial(binary, threads, out=log)
     else:
         return execute.serial(binary, out=log)
-
