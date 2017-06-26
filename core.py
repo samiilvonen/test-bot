@@ -71,13 +71,17 @@ def run(target):
 def init_log():
     log.write('\n' + '#'*80 + '\n')
     log.write('Run started at {0}\n'.format(time.asctime()))
+    log.flush()
 
 def pre_log(target):
     log.write('\n' + '-'*80 + '\n')
     log_line(str(target))
+    log.flush()
 
 def post_log(target):
     log.write('-'*80 + '\n')
+    log.flush()
 
 def log_line(txt):
     log.write(txt + '\n')
+    log.flush()
