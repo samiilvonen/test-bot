@@ -17,6 +17,8 @@ class Config(object):
     def __init__(self, filename):
         self.targets = []
         self.__builder__ = {}
+        self.mpi_tasks = None
+        self.omp_threads = None
         self.read(filename)
         self.check()
 
