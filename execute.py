@@ -1,13 +1,15 @@
 import subprocess
 import config
 
-def serial(command, out=None, err=subprocess.STDOUT):
+def serial(command, threads=None, out=None, err=subprocess.STDOUT):
+    if threads:
+        command = 'OMP_NUM_THREADS=%d ' % threads + command
     print('Execute: ' + command)
     try:
         subprocess.check_call(command, stdout=out, stderr=err, shell=True)
-        print('  OK')
+        return True
     except subprocess.CalledProcessError:
-        print('  FAIL')
+        return False
 
 def parallel(command, tasks=4, threads=None, out=None, err=subprocess.STDOUT):
     if config.mpi_runner == 'aprun':
@@ -18,9 +20,9 @@ def parallel(command, tasks=4, threads=None, out=None, err=subprocess.STDOUT):
         raise ValueError, 'Unknown MPI runner: %s' % mpirun
     try:
         subprocess.check_call(cmd, stdout=out, stderr=err, shell=True)
-        print('  OK')
+        return True
     except subprocess.CalledProcessError:
-        print('  FAIL')
+        return False
 
 def aprun(command, tasks=4, threads=None):
     runner = 'aprun -n %d ' % tasks
