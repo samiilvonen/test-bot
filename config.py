@@ -12,6 +12,7 @@ ro_lang = re.compile('(?P<all>\(\s*(?P<language>[^)+\s]*)\s*'
 ro_assign = re.compile('(?P<all>(?P<key>[a-zA-Z0-9_.-]+)(?P<plus>\+?)='
         + '''(?P<value>["'].*["']|[a-zA-Z0-9_./-]+))''')
 ro_tag = re.compile('\s*\+(?P<tag>\w+)')
+ro_comment = re.compile('(^|\n)\s*(?P<comment>#[^\n]*\n)')
 
 class Config(object):
     def __init__(self, filename):
@@ -34,6 +35,8 @@ class Config(object):
         self.__filename__ = filename
         with open(filename) as fp:
             txt = fp.read()
+        for match in ro_comment.finditer(txt):
+            txt = txt.replace(match.group('comment'), '', 1)
         for match in ro_block.finditer(txt):
             family = match.group('name')
             section = match.group('definition')

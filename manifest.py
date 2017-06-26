@@ -8,6 +8,7 @@ ro_assign = re.compile('(?P<all>(?P<key>[a-zA-Z0-9_.-]+)='
         + '''(?P<value>["'].*["']|[a-zA-Z0-9_./-]+))''')
 ro_tag = re.compile('(^|\s+)\+(?P<tag>\w+)')
 ro_word = re.compile('''["'](.*)["']|(\w+)''')
+ro_comment = re.compile('(^|\n)\s*(?P<comment>#[^\n]*\n)')
 
 class Manifest(object):
     def __init__(self, filename):
@@ -23,6 +24,8 @@ class Manifest(object):
         self.__filename__ = filename
         with open(filename) as fp:
             txt = fp.read()
+        for match in ro_comment.finditer(txt):
+            txt = txt.replace(match.group('comment'), '', 1)
         for match in ro_target.finditer(txt):
             path = match.group('target')
             snippet = match.group('definition')
