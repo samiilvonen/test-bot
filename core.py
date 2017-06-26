@@ -18,13 +18,13 @@ def guess_binary(pre, post):
     for name in files:
         if name.endswith(('.o', '.mod', '.MOD')):
             prune.append(name)
-    files = [x for x in files if not in prune]
+    files = [x for x in files if x not in prune]
     if not len(files):
         return None
     return files[0]
 
 def make(target):
-    pre_log(target)
+    pre_log(target, 'make')
     pre = set([x for x in os.listdir('.') if os.path.isfile(x)])
     try:
         subprocess.check_call('make', stdout=log, stderr=subprocess.STDOUT,
@@ -40,7 +40,7 @@ def make(target):
         post_log(target)
 
 def build(target, family, output=None):
-    pre_log(target)
+    pre_log(target, 'build')
     flavours = []
     if target.mpi:
         flavours.append('mpi')
@@ -59,7 +59,7 @@ def build(target, family, output=None):
     return True
 
 def run(target):
-    pre_log(target)
+    pre_log(target, 'run')
     binary = './a.out'
     try:
         if hasattr(target, 'binary'):
