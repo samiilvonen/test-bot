@@ -8,6 +8,7 @@
 from optparse import OptionParser
 import logging
 import sys
+import os
 import core
 
 if __name__ == '__main__':
@@ -44,12 +45,16 @@ if __name__ == '__main__':
     cmd = args.pop(0)
     if cmd == 'manifest':
         core.manifest.echo()
+    elif cmd == 'add':
+        core.manifest.update(args[0])
     elif cmd == 'run':
         failed = []
+        pwd = os.path.realpath('.')
         # build
         print('BUILD')
         for target in core.manifest:
-            if target.language == 'make':
+            os.chdir(target.workdir())
+            if target.language() == 'make':
                 ok = core.make(target)
             else:
                 ok = core.build(target, options.compiler)
@@ -58,9 +63,11 @@ if __name__ == '__main__':
             else:
                 print('[FAIL]  ' + str(target))
                 failed.append(target)
+            os.chdir(pwd)
         # run
         print('\nRUN')
         for target in core.manifest:
+            os.chdir(target.workdir())
             if target in failed:
                 print('[SKIP]  ' + str(target))
             if core.run(target):
@@ -68,6 +75,8 @@ if __name__ == '__main__':
             else:
                 print('[FAIL]  ' + str(target))
                 failed.append(target)
+            os.chdir(pwd)
+        print('')
         if failed:
             print('Oops. {0} targets failed:'.format(len(failed)))
             for target in failed:
