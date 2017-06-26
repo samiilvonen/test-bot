@@ -30,7 +30,7 @@ class BaseCompiler(object):
 
     def __call__(self, filename):
         cmd = self.invocation() % filename
-        execute.serial(cmd, out=self.stdout, err=self.stderr)
+        return execute.serial(cmd, out=self.stdout, err=self.stderr)
 
 
 class Compiler(BaseCompiler):
