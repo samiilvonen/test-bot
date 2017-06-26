@@ -12,6 +12,17 @@ if os.path.exists(botdir):
     log = open(botdir + '/loki', 'a')
 basedir = os.path.realpath('.')
 
+def guess_binary(pre, post):
+    files = list(post.difference(pre))
+    prune = []
+    for name in files:
+        if name.endswith(('.o', '.mod', '.MOD')):
+            prune.append(name)
+    files = [x for x in files if not in prune]
+    if not len(files):
+        return None
+    return files[0]
+
 def make(target):
     pre_log(target)
     pre = set([x for x in os.listdir('.') if os.path.isfile(x)])
@@ -19,9 +30,9 @@ def make(target):
         subprocess.check_call('make', stdout=log, stderr=subprocess.STDOUT,
                 shell=True)
         post = set([x for x in os.listdir('.') if os.path.isfile(x)])
-        new = post.difference(pre)
-        if new and not hasattr(target, 'binary'):
-            target.binary = str(new.pop())
+        binary = guess_binary(pre, post)
+        if binary and not hasattr(target, 'binary'):
+            target.binary = str(binary)
         return True
     except subprocess.CalledProcessError:
         return False
