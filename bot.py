@@ -50,10 +50,10 @@ if __name__ == '__main__':
     elif cmd == 'init':
         if not os.path.exists(core.botdir):
             os.mkdir(core.botdir)
-            with open(core.botdir + '/config') as fp:
+            with open(core.botdir + '/config', 'w') as fp:
                 fp.write('# Configuration for\n')
                 fp.write('#   github.com/mlouhivu/test-bot.git\n')
-            with open(core.botdir + '/config') as fp:
+            with open(core.botdir + '/manifest', 'w') as fp:
                 fp.write('# Manifest of test targets for\n')
                 fp.write('#   github.com/mlouhivu/test-bot.git\n')
     elif cmd == 'run':
