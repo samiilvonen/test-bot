@@ -1,6 +1,7 @@
 import os
 import re
 from target import Target
+import core
 
 ro_target = re.compile('\[\s*(?P<target>[^]]+)\s*\](?P<definition>[^[]*)')
 ro_assign = re.compile('(?P<all>(?P<key>[a-zA-Z0-9_.-]+)='
@@ -12,6 +13,9 @@ class Manifest(object):
     def __init__(self, filename):
         self.targets = []
         self.read(filename)
+
+    def __iter__(self):
+        return iter(self.targets)
 
     def read(self, filename):
         if not os.path.isfile(filename):
@@ -57,3 +61,32 @@ class Manifest(object):
         for target in self.targets:
             target.echo()
             print('')
+
+    def update(self, source):
+        new = []
+        for root, dirs, files in os.walk(source):
+            root = os.path.realpath(root)
+            for name in files:
+                path = root + '/' + name
+                if path not in self:
+                    new.append(os.path.relpath(path))
+            prune = []
+            for name in dirs:
+                if name.startswith(core.botdir):
+                    prune.append(name)
+                    continue
+                path = os.path.realpath(root + '/' + name)
+                makefile = path + '/Makefile'
+                if os.path.exists(makefile):
+                    if path not in self:
+                        new.append(os.path.relpath(path))
+                    prune.append(name)
+            for x in prune:
+                dirs.remove(x)
+        if new:
+            print('New targets:')
+            for target in new:
+                print('  ' + target)
+        with open(self.__filename__, 'a') as fp:
+            for target in new:
+                fp.write('\n[{0}]\n  type=pass\n'.format(target))
