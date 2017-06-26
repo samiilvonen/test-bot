@@ -83,8 +83,11 @@ class Config(object):
             else:
                 return self.__builder__[family][(language,)]
         except KeyError:
-            raise ValueError, 'Unknown compiler: {0} {1} {2}'.format(
-                    family, language, flavours)
+            try:
+                return self.__build_args__(family, None, flavours)
+            except ValueError:
+                raise ValueError, 'Unknown compiler: {0} {1} {2}'.format(
+                        family, language, flavours)
 
     def compiler(self, family='gnu', language='c', flavours=None):
         args = self.__build_args__(family, language, flavours)
