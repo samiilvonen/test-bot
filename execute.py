@@ -4,7 +4,6 @@ import config
 def serial(command, threads=None, out=None, err=subprocess.STDOUT):
     if threads:
         command = 'OMP_NUM_THREADS=%d ' % threads + command
-    print('Execute: ' + command)
     try:
         subprocess.check_call(command, stdout=out, stderr=err, shell=True)
         return True
