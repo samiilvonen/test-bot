@@ -10,6 +10,7 @@ if os.path.exists(botdir):
     manifest = Manifest(botdir + '/manifest')
     config = Config(botdir + '/config')
     log = open(botdir + '/loki', 'a')
+basedir = os.path.realpath('.')
 
 def make(target):
     pre_log(target)

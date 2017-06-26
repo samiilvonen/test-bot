@@ -1,4 +1,5 @@
 import os
+import core
 
 defaults = {
         'type': 'pass',
@@ -19,11 +20,14 @@ class Target(object):
     def setup(self, path):
         try:
             if os.path.exists(path):
-                self.path = os.path.realpath(path)
+                self.name = path
             else:
                 raise ValueError, 'Target path does not exist.'
         except TypeError:
             raise TypeError, 'Invalid target path: ' + repr(path)
+
+    def path(self):
+        return os.path.join(core.basedir, self.name)
 
     def define(self, **args):
         for key,value in args.items():
@@ -34,7 +38,7 @@ class Target(object):
         return cmp(str(self), str(other))
 
     def __str__(self):
-        return str(self.path)
+        return str(self.name)
 
     def __repr__(self):
         keys = self.__keys__.difference(
@@ -43,7 +47,7 @@ class Target(object):
         if extras:
             extras = ', ' + extras
         return 'Target({0}, type={1}, reference={2}, mpi={3}, omp={4}{5})'\
-                .format(self.path, self.type, self.reference, self.mpi,
+                .format(self.name, self.type, self.reference, self.mpi,
                         self.omp, extras)
 
     def echo(self):
@@ -58,14 +62,14 @@ class Target(object):
             print('  {0}={1}'.format(key, getattr(self, key)))
 
     def isdir(self):
-        return os.path.isdir(self.path)
+        return os.path.isdir(self.path())
 
     def isfile(self):
-        return os.path.isfile(self.path)
+        return os.path.isfile(self.path())
 
     def language(self):
         if self.isdir():
-            if os.path.exists(str(self) + '/Makefile'):
+            if os.path.exists(self.path() + '/Makefile'):
                 return 'make'
         if self.isfile():
             if str(self).lower().endswith(('.c')):
@@ -76,5 +80,5 @@ class Target(object):
 
     def workdir(self):
         if self.isdir():
-            return self.path
-        return os.path.dirname(self.path)
+            return self.path()
+        return os.path.dirname(self.path())
