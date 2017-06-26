@@ -73,13 +73,20 @@ def init_log():
     log.write('Run started at {0}\n'.format(time.asctime()))
     log.flush()
 
-def pre_log(target):
-    log.write('\n' + '-'*80 + '\n')
-    log_line(str(target))
+def pre_log(target, mode):
+    line = '[-- Start of ' + str(mode).upper() + ' ' + str(target) + ' '
+    while len(line) < 78:
+        line += '-'
+    line += ']'
+    log.write('\n' + line + '\n')
     log.flush()
 
 def post_log(target):
-    log.write('-'*80 + '\n')
+    line = '[-- End of ' + str(target) + ' '
+    while len(line) < 78:
+        line += '-'
+    line += ']'
+    log.write('\n' + line + '\n')
     log.flush()
 
 def log_line(txt):
