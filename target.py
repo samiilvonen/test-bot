@@ -22,12 +22,15 @@ class Target(object):
             if os.path.exists(path):
                 self.name = path
             else:
-                raise ValueError, 'Target path does not exist.'
+                raise ValueError, 'Target path does not exist: ' + repr(path)
         except TypeError:
             raise TypeError, 'Invalid target path: ' + repr(path)
 
     def path(self):
         return os.path.join(core.basedir, self.name)
+
+    def filename(self):
+        return os.path.basename(self.name)
 
     def define(self, **args):
         for key,value in args.items():
