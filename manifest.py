@@ -75,7 +75,7 @@ class Manifest(object):
                     new.append(os.path.relpath(path))
             prune = []
             for name in dirs:
-                if name.startswith(core.botdir):
+                if name.startswith((core.botdir, '.git')):
                     prune.append(name)
                     continue
                 path = os.path.realpath(root + '/' + name)
