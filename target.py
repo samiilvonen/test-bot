@@ -19,7 +19,7 @@ class Target(object):
     def setup(self, path):
         try:
             if os.path.exists(path):
-                self.path = path
+                self.path = os.path.realpath(path)
             else:
                 raise ValueError, 'Target path does not exist.'
         except TypeError:
@@ -73,3 +73,8 @@ class Target(object):
             if str(self).lower().endswith(('.f', '.f90', '.f77')):
                 return 'fortran'
         return None
+
+    def workdir(self):
+        if self.isdir():
+            return self.path
+        return os.path.dirname(self.path)
