@@ -1,13 +1,15 @@
 import subprocess
+import os
 from manifest import Manifest
 from config import Config
 import execute
 
 botdir = '.bot'
-manifest = Manifest(botdir + '/manifest')
-config = Config(botdir + '/config')
-log = open(botdir + '/loki', 'a')
-log.write('#'*80 + '\n')
+if os.path.exists(botdir):
+    manifest = Manifest(botdir + '/manifest')
+    config = Config(botdir + '/config')
+    log = open(botdir + '/loki', 'a')
+    log.write('#'*80 + '\n')
 
 def make(target):
     try:
