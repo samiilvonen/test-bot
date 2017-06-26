@@ -1,9 +1,11 @@
 import subprocess
 import config
+import core
 
 def serial(command, threads=None, out=None, err=subprocess.STDOUT):
     if threads:
         command = 'OMP_NUM_THREADS=%d ' % threads + command
+    core.log_line(command)
     try:
         subprocess.check_call(command, stdout=out, stderr=err, shell=True)
         return True
@@ -17,6 +19,7 @@ def parallel(command, tasks=4, threads=None, out=None, err=subprocess.STDOUT):
         cmd = mpirun(command, tasks, threads)
     else:
         raise ValueError, 'Unknown MPI runner: %s' % mpirun
+    core.log_line(cmd)
     try:
         subprocess.check_call(cmd, stdout=out, stderr=err, shell=True)
         return True

@@ -57,6 +57,7 @@ if __name__ == '__main__':
                 fp.write('# Manifest of test targets for\n')
                 fp.write('#   github.com/mlouhivu/test-bot.git\n')
     elif cmd == 'run':
+        core.init_log()
         failed = []
         pwd = os.path.realpath('.')
         # build
