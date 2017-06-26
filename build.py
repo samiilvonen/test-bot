@@ -1,3 +1,4 @@
+import subprocess
 import execute
 
 class BaseCompiler(object):
@@ -7,7 +8,7 @@ class BaseCompiler(object):
         self.options = self.parse_options(options)
         self.output = output and str(output)
         self.stdout = out
-        self.stderr = err
+        self.stderr = err and subprocess.STDOUT
 
     def parse_options(self, options):
         if type(options) is str:
@@ -43,8 +44,9 @@ class Linker(BaseCompiler):
         self.options = self.parse_options(options)
         self.output = output and str(output)
         self.libraries = []
-        for library in libraries:
-            self.add_library(library)
+        if libraries:
+            for library in libraries:
+                self.add_library(library)
 
     def invocation(self):
         cmd = self.command + ' '
