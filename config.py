@@ -4,7 +4,8 @@ from copy import deepcopy
 from build import Compiler
 from build import Linker
 
-mpi_runner = 'aprun'
+runner = 'aprun'
+compute_node = True
 
 ro_block = re.compile('\[\s*(?P<name>[^]]+)\s*\](?P<definition>[^[]*)')
 ro_lang = re.compile('(?P<all>\(\s*(?P<language>[^)+\s]*)\s*'
