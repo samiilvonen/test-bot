@@ -82,6 +82,7 @@ def run(target):
 def init_log():
     log.write('\n' + '#'*80 + '\n')
     log.write('Run started at {0}\n'.format(time.asctime()))
+    log_modules()
     log.flush()
 
 def pre_log(target, mode):
@@ -103,3 +104,11 @@ def post_log(target):
 def log_line(txt):
     log.write(txt + '\n')
     log.flush()
+
+def log_modules():
+    try:
+        out = subprocess.check_output('module list', shell=True)
+    except subprocess.CalledProcessError:
+        return False
+    log_line('')
+    log.write(out.rstrip('\n') + '\n')
