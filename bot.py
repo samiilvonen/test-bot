@@ -71,6 +71,8 @@ if __name__ == '__main__':
             if not build:
                 failed.append(target)
                 run = 'skip'
+            elif hasattr(target, 'skip_run') and target.skip_run:
+                run = 'skip'
             else:
                 run = core.run(target)
             if not run:
