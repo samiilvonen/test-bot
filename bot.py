@@ -61,7 +61,7 @@ if __name__ == '__main__':
         failed = []
         pwd = os.path.realpath('.')
         result = {True: '[ OK ]', False: '[FAIL]', 'skip': '[SKIP]'}
-        print('BUILD RUN  Target')
+        print('BUILD   RUN    Target')
         for target in core.manifest:
             os.chdir(target.workdir())
             if target.language() == 'make':
