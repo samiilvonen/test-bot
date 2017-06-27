@@ -1,4 +1,5 @@
 import subprocess
+import commands
 import os
 import time
 from manifest import Manifest
@@ -106,9 +107,6 @@ def log_line(txt):
     log.flush()
 
 def log_modules():
-    try:
-        out = subprocess.check_output('module list', shell=True)
-    except subprocess.CalledProcessError:
-        return False
+    status, out = commands.getstatusoutput('module list')
     log_line('')
     log.write(out.rstrip('\n') + '\n')
