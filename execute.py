@@ -2,9 +2,7 @@ import subprocess
 import config
 import core
 
-def serial(command, threads=None, out=None, err=subprocess.STDOUT):
-    if threads:
-        command = 'OMP_NUM_THREADS=%d ' % threads + command
+def serial(command, out=None, err=subprocess.STDOUT):
     core.log_line(command)
     try:
         subprocess.check_call(command, stdout=out, stderr=err, shell=True)
@@ -33,7 +31,9 @@ def aprun(command, tasks=4, threads=None):
     return runner + command
 
 def mpirun(command, tasks=4, threads=None):
-    runner = 'mpirun -np %d ' % tasks
+    runner = ''
+    if tasks and tasks > 1:
+        runner = 'mpirun -np %d ' % tasks
     if threads:
         runner = 'OMP_NUM_THREADS=%d ' % threads + runner
     return runner + command

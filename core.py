@@ -73,8 +73,9 @@ def run(target):
             tasks = config.mpi_tasks or 4
             return execute.parallel(binary, tasks, out=log)
         elif target.omp:
+            tasks = 1
             threads = config.omp_threads or 4
-            return execute.serial(binary, threads, out=log)
+            return execute.parallel(binary, tasks, threads, out=log)
         else:
             return execute.serial(binary, out=log)
     finally:
