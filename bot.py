@@ -60,31 +60,23 @@ if __name__ == '__main__':
         core.init_log()
         failed = []
         pwd = os.path.realpath('.')
-        # build
-        print('BUILD')
+        result = {True: '[ OK ]', False: '[FAIL]', 'skip': '[SKIP]'}
+        print('BUILD RUN  Target')
         for target in core.manifest:
             os.chdir(target.workdir())
             if target.language() == 'make':
-                ok = core.make(target)
+                build = core.make(target)
             else:
-                ok = core.build(target, options.compiler)
-            if ok:
-                print('[ OK ]  ' + str(target))
-            else:
-                print('[FAIL]  ' + str(target))
+                build = core.build(target, options.compiler)
+            if not build:
                 failed.append(target)
-            os.chdir(pwd)
-        # run
-        print('\nRUN')
-        for target in core.manifest:
-            os.chdir(target.workdir())
-            if target in failed:
-                print('[SKIP]  ' + str(target))
-            if core.run(target):
-                print('[ OK ]  ' + str(target))
+                run = 'skip'
             else:
-                print('[FAIL]  ' + str(target))
+                run = core.run(target)
+            if not run:
                 failed.append(target)
+            print('{0}  {1}'.format(
+                ' '.join([result[x] for x in (build, run)]), str(target)))
             os.chdir(pwd)
         print('')
         if failed:
