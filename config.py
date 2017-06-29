@@ -93,9 +93,9 @@ class Config(object):
                 raise ValueError, 'Unknown compiler: {0} {1} {2}'.format(
                         family, language, flavours)
 
-    def compiler(self, family='gnu', language='c', flavours=None):
+    def compiler(self, family='gnu', language='c', flavours=None, link=True):
         args = self.__build_args__(family, language, flavours)
-        opts = {}
+        opts = {'link': link}
         if 'compile-options' in args:
             opts['options'] = args['compile-options']
         for key in ['output']:

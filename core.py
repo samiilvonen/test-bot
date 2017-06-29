@@ -40,19 +40,21 @@ def make(target):
     finally:
         post_log(target)
 
-def build(target, family, output=None):
+def build(target, family, output=None, link=True):
     pre_log(target, 'build')
     flavours = []
     if target.mpi:
         flavours.append('mpi')
     if target.omp:
         flavours.append('omp')
-    cc = config.compiler(family, target.language(), flavours)
+    cc = config.compiler(family, target.language(), flavours, link=link)
     link = config.linker(family, target.language(), flavours)
     if output:
         cc.output = output
     elif hasattr(target, 'binary'):
         cc.output = target.binary
+    if not link:
+        cc.output = None
     cc.stdout = log
     cc.stderr = log
     cc.compile(target.filename())

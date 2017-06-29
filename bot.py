@@ -66,12 +66,15 @@ if __name__ == '__main__':
             os.chdir(target.workdir())
             if target.language() == 'make':
                 build = core.make(target)
+            elif hasattr(target, 'do_not_link') and target.do_not_link:
+                build = core.build(target, options.compiler, link=False)
             else:
                 build = core.build(target, options.compiler)
             if not build:
                 failed.append(target)
                 run = 'skip'
-            elif hasattr(target, 'skip_run') and target.skip_run:
+            elif (hasattr(target, 'do_not_link') and target.do_not_link) or \
+                    (hasattr(target, 'skip_run') and target.skip_run):
                 run = 'skip'
             else:
                 run = core.run(target)

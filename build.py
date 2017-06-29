@@ -34,15 +34,20 @@ class BaseCompiler(object):
 
 
 class Compiler(BaseCompiler):
+    def __init__(self, command, options=None, output=None, link=True,
+            out=None, err=None):
+        super(Compiler, self).__init__(command, options, output, out, err)
+        if not link:
+            self.options.append('-c')
+
     def compile(self, filename):
         self(filename)
 
 
 class Linker(BaseCompiler):
-    def __init__(self, command, options=None, libraries=None, output=None):
-        self.command = str(command)
-        self.options = self.parse_options(options)
-        self.output = output and str(output)
+    def __init__(self, command, options=None, libraries=None, output=None,
+            out=None, err=None):
+        super(Linker, self).__init__(command, options, output, out, err)
         self.libraries = []
         if libraries:
             for library in libraries:
