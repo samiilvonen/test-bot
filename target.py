@@ -71,6 +71,11 @@ class Target(object):
         return os.path.isfile(self.path())
 
     def language(self):
+        try:
+            if self.makefile:
+                return 'make'
+        except AttributeError:
+            pass
         if self.isdir():
             if os.path.exists(self.path() + '/Makefile'):
                 return 'make'

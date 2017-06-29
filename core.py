@@ -26,9 +26,13 @@ def guess_binary(pre, post):
 
 def make(target):
     pre_log(target, 'make')
+    if hasattr(target, 'makefile') and target.makefile:
+        cmd = 'make -f ' + target.filename()
+    else:
+        cmd = 'make'
     pre = set([x for x in os.listdir('.') if os.path.isfile(x)])
     try:
-        subprocess.check_call('make', stdout=log, stderr=subprocess.STDOUT,
+        subprocess.check_call(cmd, stdout=log, stderr=subprocess.STDOUT,
                 shell=True)
         post = set([x for x in os.listdir('.') if os.path.isfile(x)])
         binary = guess_binary(pre, post)
