@@ -2,7 +2,7 @@ import subprocess
 import config
 import core
 
-def serial(command, out=None, err=subprocess.STDOUT):
+def serial(command, out=None, err=subprocess.STDOUT, user_input=None):
     if config.compute_node:
         if config.runner == 'aprun':
             command = aprun(command, tasks=1)
@@ -10,6 +10,8 @@ def serial(command, out=None, err=subprocess.STDOUT):
             command = mpirun(command, tasks=1)
         else:
             raise ValueError, 'Unknown runner: %s' % config.runner
+    if user_input:
+        command = "echo '{0}' | ".format(user_input) + command
     core.log_line(command)
     try:
         subprocess.check_call(command, stdout=out, stderr=err, shell=True)
@@ -17,16 +19,19 @@ def serial(command, out=None, err=subprocess.STDOUT):
     except subprocess.CalledProcessError:
         return False
 
-def parallel(command, tasks=4, threads=None, out=None, err=subprocess.STDOUT):
+def parallel(command, tasks=4, threads=None, out=None, err=subprocess.STDOUT,
+        user_input=None):
     if config.runner == 'aprun':
-        cmd = aprun(command, tasks, threads)
+        command = aprun(command, tasks, threads)
     elif config.runner == 'mpirun':
-        cmd = mpirun(command, tasks, threads)
+        command = mpirun(command, tasks, threads)
     else:
         raise ValueError, 'Unknown runner: %s' % config.runner
-    core.log_line(cmd)
+    if user_input:
+        command = "echo '{0}' | ".format(user_input) + command
+    core.log_line(command)
     try:
-        subprocess.check_call(cmd, stdout=out, stderr=err, shell=True)
+        subprocess.check_call(command, stdout=out, stderr=err, shell=True)
         return True
     except subprocess.CalledProcessError:
         return False

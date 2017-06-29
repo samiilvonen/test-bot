@@ -67,23 +67,30 @@ def build(target, family, output=None, link=True):
 
 def run(target):
     pre_log(target, 'run')
-    binary = './a.out'
+    command = './a.out'
     try:
         if hasattr(target, 'binary'):
-            binary = './' + target.binary
+            command = './' + target.binary
+        if hasattr(target, 'arguments'):
+            command += ' ' + target.arguments.strip('\"\'')
+        args = {'out': log}
+        try:
+            args['user_input'] = target.user_input.strip('\"\'')
+        except AttributeError:
+            args['user_input'] = None
         if target.mpi and target.omp:
-            tasks = config.mpi_tasks or 4
-            threads = config.omp_threads or 4
-            return execute.parallel(binary, tasks, threads, out=log)
+            args['tasks'] = config.mpi_tasks or 4
+            args['threads'] = config.omp_threads or 4
+            return execute.parallel(command, **args)
         elif target.mpi:
-            tasks = config.mpi_tasks or 4
-            return execute.parallel(binary, tasks, out=log)
+            args['tasks'] = config.mpi_tasks or 4
+            return execute.parallel(command, **args)
         elif target.omp:
-            tasks = 1
-            threads = config.omp_threads or 4
-            return execute.parallel(binary, tasks, threads, out=log)
+            args['tasks'] = 1
+            args['threads'] = config.omp_threads or 4
+            return execute.parallel(command, **args)
         else:
-            return execute.serial(binary, out=log)
+            return execute.serial(command, **args)
     finally:
         post_log(target)
 
