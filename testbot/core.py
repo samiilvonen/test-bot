@@ -6,11 +6,11 @@ from manifest import Manifest
 from config import Config
 import execute
 
-botdir = '.bot'
+botdir = '.test'
 if os.path.exists(botdir):
     manifest = Manifest(botdir + '/manifest')
     config = Config(botdir + '/config')
-    log = open(botdir + '/loki', 'a')
+    log = open(botdir + '/log', 'a')
 basedir = os.path.realpath('.')
 
 def guess_binary(pre, post):
