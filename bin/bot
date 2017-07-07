@@ -1,0 +1,18 @@
+#!/usr/bin/python
+# -*- coding: ISO-8859-1 -*-
+#---------------------------------------------------------------------------#
+# Function: Test bot.                                                       #
+# Usage: bot [options] [command] {[options]}                                #
+# Help:  bot --help                                                         #
+#---------------------------------------------------------------------------#
+import sys
+import os
+try:
+    from testbot import cli
+except ImportError:
+    print("Module testbot not found.")
+    print("  please run 'source {0}/env.sh' or fix your PYTHONPATH".format(\
+            os.path.dirname(sys.argv[0]) or '.'))
+    sys.exit(1)
+
+sys.exit(cli.run())

@@ -5,49 +5,56 @@
 # Usage: bot.py [options] [command] {[options]}                             #
 # Help: run bot.py --help                                                   #
 #---------------------------------------------------------------------------#
-from optparse import OptionParser
+from argparse import ArgumentParser
 import logging
 import sys
 import os
 import core
 
-if __name__ == '__main__':
-    usage = 'usage: %prog [command] {[options]}'
+class MyParser(ArgumentParser):
+    def error(self, message):
+        self.print_help()
+        sys.exit(1)
+
+def run():
+    prog = 'bot'
+    usage = '%(prog)s {options} [command] {<path> ...}'
     desc = 'Test bot.'
-    parser = OptionParser(usage=usage, description=desc)
-    parser.add_option('--compiler', action='store', default='cray',
-            help='compile environment in use (default: %default)')
-    parser.add_option('--verbose', action='store_true', default=False,
+
+    parser = MyParser(usage=usage, description=desc)
+    parser.add_argument('command',
+            help='add / init / manifest / run')
+    parser.add_argument('paths', nargs='*',
+            help='(optional) files or directories to process')
+    parser.add_argument('--compiler', action='store', default='cray',
+            help='compile environment in use (default: %(default)s)')
+    parser.add_argument('--verbose', action='store_true', default=False,
             help='display additional information while running')
-    parser.add_option('--debug', action='store_true', default=False,
+    parser.add_argument('--debug', action='store_true', default=False,
             help='run in debug mode, i.e. maximum information')
 
-    options, args = parser.parse_args()
+    args = parser.parse_args()
 
     # set logger format etc.
     logging.basicConfig(level=logging.WARNING, format='%(levelname)s ' + \
             '%(message)s @ %(asctime)s %(module)s line %(lineno)s',
             datefmt='%H:%M:%S')
     # set logging thresholds
-    if options.debug:
+    if args.debug:
         logging.getLogger('').setLevel(logging.DEBUG)
-    elif options.verbose:
+    elif args.verbose:
         logging.getLogger('').setLevel(logging.WARNING)
     else:
         logging.getLogger('').setLevel(logging.CRITICAL)
-    logging.debug('options: %s' % repr(options))
     logging.debug('args: %s' % repr(args))
 
-    # too few arguments?
-    if len(args) < 1:
-        parser.error('too few arguments')
-
-    cmd = args.pop(0)
-    if cmd == 'manifest':
+    # execute given command
+    if args.command == 'manifest':
         core.manifest.echo()
-    elif cmd == 'add':
-        core.manifest.update(args[0])
-    elif cmd == 'init':
+    elif args.command == 'add':
+        for path in args.paths:
+            core.manifest.update(path)
+    elif args.command == 'init':
         if not os.path.exists(core.botdir):
             os.mkdir(core.botdir)
             with open(core.botdir + '/config', 'w') as fp:
@@ -56,7 +63,7 @@ if __name__ == '__main__':
             with open(core.botdir + '/manifest', 'w') as fp:
                 fp.write('# Manifest of test targets for\n')
                 fp.write('#   github.com/mlouhivu/test-bot.git\n')
-    elif cmd == 'run':
+    elif args.command == 'run':
         core.init_log()
         failed = []
         pwd = os.path.realpath('.')
@@ -67,9 +74,9 @@ if __name__ == '__main__':
             if target.language() == 'make':
                 build = core.make(target)
             elif hasattr(target, 'do_not_link') and target.do_not_link:
-                build = core.build(target, options.compiler, link=False)
+                build = core.build(target, args.compiler, link=False)
             else:
-                build = core.build(target, options.compiler)
+                build = core.build(target, args.compiler)
             if not build:
                 failed.append(target)
                 run = 'skip'
@@ -91,7 +98,11 @@ if __name__ == '__main__':
         else:
             print('Yippee. All is good.')
     else:
-        print('Unknown command: ' + cmd)
+        print('Unknown command: ' + args.command)
+        return 1
 
     # the end.
+    return 0
 
+if __name__ == '__main__':
+    run()
