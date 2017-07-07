@@ -72,12 +72,10 @@ def run(target):
         if hasattr(target, 'binary'):
             command = './' + target.binary
         if hasattr(target, 'arguments'):
-            command += ' ' + target.arguments.strip('\"\'')
+            command += ' ' + target.arguments
         args = {'out': log}
-        try:
-            args['user_input'] = target.user_input.strip('\"\'')
-        except AttributeError:
-            args['user_input'] = None
+        args['user_input'] = target.as_str('user_input')
+        args['export'] = target.as_tuple('export')
         if target.mpi and target.omp:
             args['tasks'] = config.mpi_tasks or 4
             args['threads'] = config.omp_threads or 4

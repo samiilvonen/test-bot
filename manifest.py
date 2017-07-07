@@ -5,10 +5,11 @@ import core
 
 ro_target = re.compile('\[\s*(?P<target>[^]]+)\s*\](?P<definition>[^[]*)')
 ro_assign = re.compile('(?P<all>(?P<key>[a-zA-Z0-9_.-]+)='
-        + '''(?P<value>["'].*["']|[a-zA-Z0-9_./-]+))''')
+        + '''(?P<value>["'].*["']|\(.*\)|[a-zA-Z0-9_./-]+))''')
 ro_tag = re.compile('(^|\s+)\+(?P<tag>\w+)')
 ro_word = re.compile('''["'](.*)["']|(\w+)''')
 ro_comment = re.compile('(^|\n)\s*(?P<comment>#[^\n]*\n)')
+ro_list = re.compile('\((?P<list>.*)\)')
 
 class Manifest(object):
     def __init__(self, filename):
@@ -37,7 +38,12 @@ class Manifest(object):
                 snippet = snippet.replace(tag, '', 1)
             # find all arguments in long-form ...
             for m in ro_assign.finditer(snippet):
-                args[m.group('key')] = m.group('value')
+                if ro_list.match(m.group('value')):
+                    value = ro_list.search(m.group('value')).group('list')
+                    value = tuple([x.strip('\'\" ') for x in value.split(',')])
+                else:
+                    value = m.group('value').strip('\'\"')
+                args[m.group('key')] = value
                 snippet = snippet.replace(m.group('all'), '', 1)
             # ... and in short-form
             snippet.strip()

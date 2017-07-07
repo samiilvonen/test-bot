@@ -53,6 +53,16 @@ class Target(object):
                 .format(self.name, self.type, self.reference, self.mpi,
                         self.omp, extras)
 
+    def __quote__(self, x):
+        if type(x) is str:
+            if ('"' in x) and ("'" in x):
+                return "'''{0}'''".format(x)
+            elif ("'" in x):
+                return '"{0}"'.format(x)
+            else:
+                return "'{0}'".format(x)
+        return x
+
     def echo(self):
         print('Target: {0}'.format(str(self)))
         print('  type=' + str(self.type))
@@ -62,7 +72,7 @@ class Target(object):
         keys = self.__keys__.difference(
                 set(['type', 'reference', 'mpi', 'omp']))
         for key in keys:
-            print('  {0}={1}'.format(key, getattr(self, key)))
+            print('  {0}={1}'.format(key, self.__quote__(getattr(self, key))))
 
     def isdir(self):
         return os.path.isdir(self.path())
@@ -90,3 +100,21 @@ class Target(object):
         if self.isdir():
             return self.path()
         return os.path.dirname(self.path())
+
+    def as_str(self, key):
+        try:
+            value = getattr(self, key)
+        except AttributeError:
+            return None
+        if type(value) is str:
+            return value
+        return ' '.join(value)
+
+    def as_tuple(self, key):
+        try:
+            value = getattr(self, key)
+        except AttributeError:
+            return None
+        if type(value) is tuple:
+            return value
+        return (value,)

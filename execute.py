@@ -2,12 +2,13 @@ import subprocess
 import config
 import core
 
-def serial(command, out=None, err=subprocess.STDOUT, user_input=None):
+def serial(command, out=None, err=subprocess.STDOUT, export=None,
+        user_input=None):
     if config.compute_node:
         if config.runner == 'aprun':
-            command = aprun(command, tasks=1)
+            command = aprun(command, tasks=1, env=export)
         elif config.runner == 'mpirun':
-            command = mpirun(command, tasks=1)
+            command = mpirun(command, tasks=1, env=export)
         else:
             raise ValueError, 'Unknown runner: %s' % config.runner
     if user_input:
@@ -20,11 +21,11 @@ def serial(command, out=None, err=subprocess.STDOUT, user_input=None):
         return False
 
 def parallel(command, tasks=4, threads=None, out=None, err=subprocess.STDOUT,
-        user_input=None):
+        export=None, user_input=None):
     if config.runner == 'aprun':
-        command = aprun(command, tasks, threads)
+        command = aprun(command, tasks, threads, export)
     elif config.runner == 'mpirun':
-        command = mpirun(command, tasks, threads)
+        command = mpirun(command, tasks, threads, export)
     else:
         raise ValueError, 'Unknown runner: %s' % config.runner
     if user_input:
@@ -36,16 +37,26 @@ def parallel(command, tasks=4, threads=None, out=None, err=subprocess.STDOUT,
     except subprocess.CalledProcessError:
         return False
 
-def aprun(command, tasks=4, threads=None):
+def aprun(command, tasks=4, threads=None, env=None):
     runner = 'aprun -n %d ' % tasks
     if threads:
         runner += '-d %d -e OMP_NUM_THREADS=%d ' % (threads, threads)
+    if env:
+        if type(env) is str:
+            runner += '-e ' + env + ' '
+        else:
+            runner += '-e ' + ' -e '.join(env) + ' '
     return runner + command
 
-def mpirun(command, tasks=4, threads=None):
+def mpirun(command, tasks=4, threads=None, env=None):
     runner = ''
     if tasks and tasks > 1:
         runner = 'mpirun -np %d ' % tasks
     if threads:
         runner = 'OMP_NUM_THREADS=%d ' % threads + runner
+    if env:
+        if type(env) is str:
+            runner += env + ' '
+        else:
+            runner += ' '.join(env) + ' '
     return runner + command
