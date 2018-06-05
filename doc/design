@@ -1,0 +1,77 @@
+
+compile options
+ - language aware!!
+link options
+run options
+run arguments
+tags: -> comp + link + run opt
+test target
+  - type
+    - text
+	- number
+	- array
+	- binary
+  - values / blob / verbatim
+
+---
+
+target is:
+ 1) manifest
+ 2) single directory, if it has Makefile
+ 3) each file (with known ending)
+
+option to allow one to use only manifest?
+
+---
+
+1. construct list of targets
+2. loop over targets
+  2.1. compile target (if Makefile, use make)
+  2.2. run target
+  2.3. check output
+3. print stats
+
+---
+
+[foo/bar.c] +mpi string 'foobar: 5.6' 
+
+gog/example.f90
+ type=blob
+ file=output.png
+ reference=example.png
+
+---
+
+[gnu]
+ compiler=gcc
+
+ (fortran)
+  compiler=cc
+  compile-options=
+  link-options=
+  libraries=
+
+ (fortran+mpi)
+  compiler=cc
+  compile-options=
+  link-options=
+  libraries=
+
+ (+omp)
+  compile-options+=
+
+[intel]
+ compiler=icc
+ compile-options=
+ link-options=
+ libraries=
+
+ (fortran)
+  compiler=cc
+
+ (fortran+mpi)
+  compiler=mpicc
+
+ (+omp)
+  compile-options+=
+
