@@ -5,32 +5,20 @@
  compiler=gcc
 
  (fortran)
-  compiler=cc
-  compile-options=
-  link-options=
-  libraries=
+  compiler=gfortran
 
  (fortran+mpi)
-  compiler=cc
-  compile-options=
-  link-options=
-  libraries=
+  compiler=mpif90
 
  (+omp)
-  compile-options+=
+  compile-options='-fopenmp'
 
 [intel]
  compiler=icc
- compile-options=
- link-options=
- libraries=
 
  (fortran)
-  compiler=cc
+  compiler=ifort
 
- (fortran+mpi)
+ (c+mpi)
   compiler=mpicc
-
- (+omp)
-  compile-options+=
 
