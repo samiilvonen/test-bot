@@ -1,0 +1,36 @@
+# Configuration for
+#   github.com/mlouhivu/test-bot.git
+
+[gnu]
+ compiler=gcc
+
+ (fortran)
+  compiler=cc
+  compile-options=
+  link-options=
+  libraries=
+
+ (fortran+mpi)
+  compiler=cc
+  compile-options=
+  link-options=
+  libraries=
+
+ (+omp)
+  compile-options+=
+
+[intel]
+ compiler=icc
+ compile-options=
+ link-options=
+ libraries=
+
+ (fortran)
+  compiler=cc
+
+ (fortran+mpi)
+  compiler=mpicc
+
+ (+omp)
+  compile-options+=
+
