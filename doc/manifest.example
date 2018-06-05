@@ -1,7 +1,7 @@
 # Manifest of test targets for
 #   github.com/mlouhivu/test-bot.git
 
-[foo/bar.c] +mpi text 'foobar: 5.6' 
+[foo/bar.c] +mpi text 'foobar: 5.6'
 
 [gog/example.f90]
  type=blob
