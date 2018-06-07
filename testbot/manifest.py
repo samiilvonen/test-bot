@@ -80,6 +80,11 @@ class Manifest(object):
         new = []
         for root, dirs, files in os.walk(source):
             root = os.path.realpath(root)
+            if 'Makefile' in files:
+                dirs = []
+                if root not in self:
+                    new.append(os.path.relpath(root))
+                continue
             for name in files:
                 if name.endswith(('.md', '.png', '.h')):
                     continue
