@@ -1,13 +1,15 @@
-## Manifest
+## Manifest (`.test/manifest`)
 
-Manifest is a list of files (or directories) that should be tested. Each test
+Test targets and their properties are stored in the manifest file.
+
+The manifest contains a list of files (or directories) that should be tested. Each test
 target may have additional information ([flavours](#flavours) or
 [arguments](#arguments)) to define the exact procedure for the test.
 
 ### Target
 
 Target is a single test to be carried out. It may refer to a single file or a
-directory containing a makefile. In the manifest the target path is enclosed
+directory containing a Makefile. In the manifest the target path is enclosed
 in square brackets, e.g. `[path/to/target/foo.c]`.
 
 One can define additional properties to the test by using tags or arguments in
@@ -73,7 +75,7 @@ The expected (=correct) output that should be reproduced for the test to
 pass. If using type `blob`, it should be the name of a reference file.
 
 #### makefile
-Use a non-standard name for the makefile (see option `-f` in `man make`).
+Use a non-standard name for the Makefile (see option `-f` in `man make`).
 
 #### user_input
 Can be used to pipe "user" input to the target program. Value should be a
