@@ -11,6 +11,28 @@ ro_word = re.compile('''["'](.*)["']|(\w+)''')
 ro_comment = re.compile('(^|\n)\s*(?P<comment>#[^\n]*\n)')
 ro_list = re.compile('\((?P<list>.*)\)')
 
+def parse_properties(txt):
+    if not txt:
+        return {}
+    args = {}
+    for match in ro_tag.finditer(txt):
+        tag = match.group('tag')
+        args[tag] = True
+        txt = txt.replace(tag, '', 1)
+    for match in ro_assign.finditer(txt):
+        key = match.group('key')
+        args[key] = match.group('value')
+        txt = txt.replace(match.group('all'), '', 1)
+    txt.strip()
+    if txt:
+        words = []
+        for word in ro_word.finditer(txt):
+            words.append(word.group(0) or word.group(1))
+        if len(words) == 2:
+            args['type'] = words[0]
+            args['reference'] = words[1]
+    return args
+
 class Manifest(object):
     def __init__(self, filename):
         self.targets = []
@@ -71,7 +93,7 @@ class Manifest(object):
             target.echo()
             print('')
 
-    def update(self, source):
+    def update(self, source, properties=None):
         new = []
         for root, dirs, files in os.walk(source):
             root = os.path.realpath(root)
@@ -98,6 +120,8 @@ class Manifest(object):
             print('New targets:')
             for target in new:
                 print('  ' + target)
+        args = parse_properties(properties)
         with open(self.__filename__, 'a') as fp:
-            for target in new:
-                fp.write('\n[{0}]\n  type=pass\n'.format(target))
+            for path in new:
+                target = Target(path, **args)
+                fp.write('\n' + target.format())

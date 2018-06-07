@@ -28,6 +28,8 @@ def run():
             help='(optional) files or directories to process')
     parser.add_argument('--compiler', action='store', default='cray',
             help='compile environment in use (default: %(default)s)')
+    parser.add_argument('--properties', action='store', default='type=pass',
+            help='(only add) define properties for new tests')
     parser.add_argument('--verbose', action='store_true', default=False,
             help='display additional information while running')
     parser.add_argument('--debug', action='store_true', default=False,
@@ -53,7 +55,7 @@ def run():
         core.manifest.echo()
     elif args.command == 'add':
         for path in args.paths:
-            core.manifest.update(path)
+            core.manifest.update(path, args.properties)
     elif args.command == 'init':
         if not os.path.exists(core.botdir):
             os.mkdir(core.botdir)
