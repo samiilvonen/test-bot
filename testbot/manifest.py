@@ -86,7 +86,7 @@ class Manifest(object):
                     new.append(os.path.relpath(root))
                 continue
             for name in files:
-                if name.endswith(('.md', '.png', '.h')):
+                if name.endswith(('.md', '.png', '.h', '.dat')):
                     continue
                 path = root + '/' + name
                 if path not in self:
