@@ -76,6 +76,8 @@ class Manifest(object):
         for root, dirs, files in os.walk(source):
             root = os.path.realpath(root)
             for name in files:
+                if name.endswith(('.md', '.png', '.h')):
+                    continue
                 path = root + '/' + name
                 if path not in self:
                     new.append(os.path.relpath(path))
