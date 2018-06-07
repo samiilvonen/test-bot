@@ -19,6 +19,7 @@ else
     echo "Error: No known location for testbot."
     echo "  Either run directly from the git repository"
     echo "    git clone https://github.com/mlouhivu/test-bot.git"
-    echo "    test-bot/bin/bot"
-    echo "  or install first (pip install)"
+    echo "    source test-bot/bin/env.sh"
+    echo "    bot --help"
+    echo "  or install first and then fix PATH and PYTHONPATH as needed."
 fi
