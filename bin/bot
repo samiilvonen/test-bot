@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: ISO-8859-1 -*-
 #---------------------------------------------------------------------------#
-# Function: Test bot.                                                       #
+# Function: Automated build+execute testing with a HPC twist.               #
 # Usage: bot [options] [command] {[options]}                                #
 # Help:  bot --help                                                         #
 #---------------------------------------------------------------------------#
