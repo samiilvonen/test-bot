@@ -41,6 +41,33 @@ class Manifest(object):
     def __iter__(self):
         return iter(self.targets)
 
+    def __read_definition__(self, txt):
+        args = {}
+        # find all tags
+        for match in ro_tag.finditer(txt):
+            tag = match.group('tag')
+            args[tag] = True
+            txt = txt.replace(tag, '', 1)
+        # find all arguments in long-form ...
+        for match in ro_assign.finditer(txt):
+            if ro_list.match(match.group('value')):
+                value = ro_list.search(match.group('value')).group('list')
+                value = tuple([x.strip('\'\" ') for x in value.split(',')])
+            else:
+                value = match.group('value').strip('\'\"')
+            args[match.group('key')] = value
+            txt = txt.replace(match.group('all'), '', 1)
+        # ... and in short-form
+        txt.strip()
+        if txt:
+            words = []
+            for word in ro_word.finditer(txt):
+                words.append(word.group(0) or word.group(1))
+            if len(words) == 2:
+                args['type'] = words[0]
+                args['reference'] = words[1]
+        return args
+
     def read(self, filename):
         if not os.path.isfile(filename):
             raise ValueError, 'File does not exist: %s' % str(filename)
@@ -52,31 +79,7 @@ class Manifest(object):
         for match in ro_target.finditer(txt):
             path = match.group('target')
             snippet = match.group('definition')
-            args = {}
-            # find all tags
-            for m in ro_tag.finditer(snippet):
-                tag = m.group('tag')
-                args[tag] = True
-                snippet = snippet.replace(tag, '', 1)
-            # find all arguments in long-form ...
-            for m in ro_assign.finditer(snippet):
-                if ro_list.match(m.group('value')):
-                    value = ro_list.search(m.group('value')).group('list')
-                    value = tuple([x.strip('\'\" ') for x in value.split(',')])
-                else:
-                    value = m.group('value').strip('\'\"')
-                args[m.group('key')] = value
-                snippet = snippet.replace(m.group('all'), '', 1)
-            # ... and in short-form
-            snippet.strip()
-            if snippet:
-                words = []
-                for word in ro_word.finditer(snippet):
-                    words.append(word.group(0) or word.group(1))
-                if len(words) == 2:
-                    args['type'] = words[0]
-                    args['reference'] = words[1]
-            self.add_target(path, args)
+            self.add_target(path, self.__read_definition__(snippet))
 
     def add_target(self, path, args={}):
         if path not in self.targets:
