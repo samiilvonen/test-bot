@@ -41,7 +41,7 @@ class Manifest(object):
     def __iter__(self):
         return iter(self.targets)
 
-    def __read_definition__(self, txt):
+    def __read_definition__(self, txt, expand=True):
         args = {}
         # find all tags
         for match in ro_tag.finditer(txt):
@@ -50,7 +50,9 @@ class Manifest(object):
             txt = txt.replace(tag, '', 1)
         # find all arguments in long-form ...
         for match in ro_assign.finditer(txt):
-            if ro_list.match(match.group('value')):
+            if not expand:
+                value = match.group('value')
+            elif ro_list.match(match.group('value')):
                 value = ro_list.search(match.group('value')).group('list')
                 value = tuple([x.strip('\'\" ') for x in value.split(',')])
             else:
