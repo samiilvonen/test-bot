@@ -19,6 +19,13 @@ class Manifest(object):
     def __iter__(self):
         return iter(self.targets)
 
+    def __bool__(self, x):
+        if x.lower() in ('true', 'yes'):
+            return True
+        elif x.lower() in ('false', 'no'):
+            return False
+        return x
+
     def __read_definition__(self, txt, expand=True):
         args = {}
         # find all tags
@@ -34,7 +41,7 @@ class Manifest(object):
                 value = ro_list.search(match.group('value')).group('list')
                 value = tuple([x.strip('\'\" ') for x in value.split(',')])
             else:
-                value = match.group('value').strip('\'\"')
+                value = self.__bool__(match.group('value').strip('\'\"'))
             args[match.group('key')] = value
             txt = txt.replace(match.group('all'), '', 1)
         # ... and in short-form

@@ -56,6 +56,8 @@ reference='foobar: 5.6'
 export=('MPICH_MAX_THREAD_SAFETY=multiple', 'FOOBAR=56')
 ```
 
+---
+
 #### type
 Defines the type of test to be used for checking the output. By default any
 output is just ignored (`type=pass`). Valid values are:
@@ -97,4 +99,18 @@ Name of a file that will contain the output instead of STDOUT.
 #### tolerance (not implemented)
 Defines the error tolerance when comparing floating point numbers, i.e.
 `difference(x, reference) < tolerance`.
+
+#### skip_run (boolean)
+Do not run the program; only build it.
+
+#### do_not_link (boolean)
+Do not link the object; only compile the code into an object.
+
+---
+
+#### Boolean values
+For arguments that expect an boolean value, one can use `true` or `yes` for
+True and `false` or `no` for False. Capitalisation does not matter; case will
+be ignored. In addition, one can also use the tag syntax as a short-hand to set arbitrary
+arguments to True, e.g. `+skip_run` is equivalent to `skip_run=true`.
 
