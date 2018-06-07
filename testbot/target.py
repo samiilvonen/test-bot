@@ -74,6 +74,17 @@ class Target(object):
         for key in keys:
             print('  {0}={1}'.format(key, self.__quote__(getattr(self, key))))
 
+    def format(self):
+        tags = ''.join([' +' + x for x in ('mpi', 'omp') if getattr(self, x)])
+        txt = '[{0}]{1}\n  type={2}\n'.format(str(self), tags, self.type)
+        if self.reference:
+            txt += '  reference={0}\n'.format(self.reference)
+        keys = self.__keys__.difference(
+                set(['type', 'reference', 'mpi', 'omp']))
+        for key in keys:
+            txt += '  {0}={1}\n'.format(key, getattr(self, key))
+        return txt
+
     def isdir(self):
         return os.path.isdir(self.path())
 
