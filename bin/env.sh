@@ -1,5 +1,9 @@
 #!/bin/bash
-export TESTBOT=$(dirname ${BASH_SOURCE[0]} | sed -e 's|/bin$|/|')
+TESTBOT="$( cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd )"
+TESTBOT=${TESTBOT/%\/bin/}
+export TESTBOT
+
+echo $TESTBOT
 
 if [ -e $TESTBOT/lib ]
 then
